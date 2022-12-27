@@ -1,0 +1,44 @@
+import net.nilsdev.jda.api.entities.Message;
+import net.nilsdev.jda.api.entities.MessageChannel;
+import net.nilsdev.jda.api.entities.User;
+import net.nilsdev.jda.api.events.message.MessageReceivedEvent;
+import net.nilsdev.jda.api.hooks.ListenerAdapter;
+
+public class MyListener extends ListenerAdapter {
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        // Check if the message starts with the "/" symbol
+        if (event.getMessage().getContentRaw().startsWith("/")) {
+            // Get the message and channel from the event
+            Message message = event.getMessage();
+            MessageChannel channel = event.getChannel();
+
+            // Get the user who sent the message
+            User sender = event.getAuthor();
+
+            // Split the message into parts by spaces
+            String[] parts = message.getContentRaw().split(" ");
+
+            // Get the command by taking the first part after the "/" symbol
+            String command = parts[0].substring(1);
+
+            // Check which command was used
+            if (command.equalsIgnoreCase("ticket")) {
+                // Send a message to the channel
+                channel.sendMessage("ticketsystem " + sender.getAsMention() + "!").queue();
+            } else if (command.equalsIgnoreCase("ticket")) {
+                // Check if there is a message to ticket
+                if (parts.length > 1) {
+                    // Concatenate all parts of the message after the command
+                    String messageToEcho = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
+
+                    // Send the message to the channel
+                    channel.sendMessage(messageToEcho).queue();
+                } else {
+                    // Send an error message if there is no message to ticket
+                    channel.sendMessage("Du brauchst einen grund, ein ticket zu öffnen").queue();
+                }
+            }
+        }
+    }
+}
